@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HomeOps – منظومة صيانة المنازل</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--tx:#14213d;--mut:#64708a;--bd:#dde3ef;--pr:#1d3a8a;--pr2:#e8eefc;--ok:#15803d;--bad:#b91c1c;--warn:#b45309;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1524;--card:#18203a;--tx:#e8ecf7;--mut:#9aa6c4;--bd:#2a3556;--pr:#6c8cff;--pr2:#202c52;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,sans-serif;line-height:1.6}
+button,input,select,textarea{font:inherit;color:inherit}
+header{background:var(--card);border-bottom:1px solid var(--bd);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.bar{max-width:1040px;margin:auto;display:flex;align-items:center;gap:14px;padding:10px 16px;flex-wrap:wrap}
+.logo{font-weight:700;color:var(--pr);font-size:20px}
+nav{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+nav a{padding:6px 12px;border-radius:8px;color:var(--mut);text-decoration:none;cursor:pointer;font-size:14px}
+nav a.on{background:var(--pr2);color:var(--pr);font-weight:600}
+.wrap{max-width:1040px;margin:auto;padding:20px 16px 60px}
+.auth{max-width:460px;margin:24px auto}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:16px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:0 0 12px}.sub{color:var(--mut);font-size:14px;margin:0 0 16px}
+label{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--bg)}
+textarea{min-height:90px;resize:vertical}
+.btn{background:var(--pr);color:#fff;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;font-weight:600;width:100%;margin-top:16px}
+html[data-theme="dark"] .btn{color:#0f1524}
+.btn.sec{background:var(--pr2);color:var(--pr)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{width:auto;margin:0;padding:6px 14px}
+.roles{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.roles button{flex:1;min-width:76px;padding:9px 6px;border:1px solid var(--bd);background:var(--card);border-radius:10px;cursor:pointer;font-size:13px}
+.roles button.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:7px 14px;border:1px solid var(--bd);border-radius:999px;background:var(--card);cursor:pointer;font-size:14px}
+.chip.on{background:var(--pr2);border-color:var(--pr);color:var(--pr);font-weight:600}
+.link{color:var(--pr);cursor:pointer;font-size:14px;text-decoration:underline;background:none;border:0;padding:0}
+.err{color:var(--bad);font-size:13px;margin-top:8px;min-height:18px}.ok{color:var(--ok)}
+.rules{font-size:13px;color:var(--mut);margin:6px 0 0;padding:0;list-style:none}.rules li.y{color:var(--ok)}
+.otp{display:flex;gap:10px;justify-content:center;direction:ltr}.otp input{width:56px;text-align:center;font-size:22px}
+.grid{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;align-items:start}
+.steps{display:flex;gap:8px;margin-bottom:16px;font-size:13px}.steps div{flex:1;padding:8px;border-radius:10px;background:var(--card);border:1px solid var(--bd);text-align:center;color:var(--mut)}.steps .on{border-color:var(--pr);color:var(--pr);font-weight:700}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.b-urgent{background:#fde8e8;color:#b91c1c}.b-mid{background:#fff1d6;color:#b45309}.b-norm{background:#dcf5e3;color:#15803d}
+.svc{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.svc .card{margin:0;text-align:center;cursor:pointer}.svc .ic{font-size:34px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:right;padding:9px 8px;border-bottom:1px solid var(--bd)}
+.kv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--bd);font-size:14px}.kv span:first-child{color:var(--mut)}
+.tbl{overflow-x:auto}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
+.shell{display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:start}.side{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px}.side a{display:block;padding:9px 12px;border-radius:9px;cursor:pointer;color:var(--mut);font-size:14px;margin-bottom:3px}.side a.on{background:var(--pr2);color:var(--pr);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}.stat{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px}.stat b{font-size:22px;display:block}.stat small{color:var(--mut)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.bar2{height:8px;background:var(--pr2);border-radius:8px;overflow:hidden;margin:8px 0 4px}.bar2 i{display:block;height:100%;background:var(--pr)}
+@media(max-width:760px){.shell{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header id="hd"></header>
+<main class="wrap" id="app"></main>
+<script>
+var ROLES={customer:'عميل',tech:'فني',call:'كول سنتر',finance:'مالي',admin:'أدمن'};
+var SERVICES=[['plumb','سباكة','🚰','تسريبات، سخانات، صرف'],['elec','كهرباء','💡','أعطال، شرر، تركيبات'],['paint','دهان','🎨','دهانات، رطوبة، تقشير']];
+var PLACES=['المطبخ','الحمام','الصالة','غرفة نوم','البلكونة','مدخل / باب الشقة','خارج الشقة / السطح','غير ذلك'];
+var SYMS=['مية بتنزل / تسريب','مفيش مية','ريحة غاز','ريحة حريق أو دخان','شرر أو صعقة كهربا','الكهربا قاطعة','صوت غريب','حاجة بايظة / مش شغالة','شروخ أو تلف في الحيطة/السقف','باب أو قفل مش بيفتح/بيقفل','تركيب أو تغيير أو صيانة دورية'];
+var WHEN=['دلوقتي','النهاردة','من كام يوم','من أسابيع'];
+var SLOTS=['الفترة الصباحية 09:00 – 12:00','بعد الظهر 12:00 – 16:00','الفترة المسائية 16:00 – 20:00'];
+function load(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var users=[],orders=[],sess=load('ho_sess',null),roleSel='customer';
+var W={desc:'',place:'',syms:[],when:'',addr:0,date:'',slot:0,step:1};
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function go(h){location.hash=h}
+
+/* ---- فرز مبدئي (قواعد بسيطة) – هيتبدل بنداء لموديل الـ ML (FastAPI) ---- */
+function triageOld(){
+  var t=(W.desc+' '+W.syms.join(' ')).toLowerCase(),svc='',pr='';
+  if(/مية|ماسورة|تسريب|حوض|سخان|صرف|حمام/.test(t))svc='plumb';
+  if(/كهرب|شرر|صعق|فيش|مفتاح|لمبة/.test(t))svc='elec';
+  if(/دهان|بوية|رطوبة|تقشر|شروخ|حيط/.test(t))svc='paint';
+  var urg=/غاز|حريق|دخان|شرر|صعق|بتنزل|قاطعة/.test(t);
+  var mid=/مفيش|صوت|بايظة|مش شغال/.test(t);
+  if(t.trim())pr=urg?'urgent':mid?'mid':'norm';
+  return{svc:svc,pr:pr};
+}
+var PN={emerg:'طوارئ',urgent:'عاجل',mid:'متوسط',norm:'عادي'};
+function pbadge(p){return '<span class="badge b-'+(p==='urgent'||p==='emerg'?'urgent':p==='mid'?'mid':'norm')+'">'+PN[p]+'</span>'}
+function svcName(k){for(var i=0;i<SERVICES.length;i++)if(SERVICES[i][0]===k)return SERVICES[i][1];return '—'}
+
+/* ---- الهيدر ---- */
+var NAV=[['home','الرئيسية'],['services','الخدمات'],['new','طلب جديد'],['orders','طلباتي'],['notifs','الإشعارات'],['invoices','الفواتير'],['support','الدعم'],['profile','حسابي']];
+function header(route){
+  var h='<div class="bar"><span class="logo">HomeOps</span>';
+  if(sess){
+    if(sess.role==='customer'){h+='<nav>'+NAV.map(function(n){return '<a class="'+(route===n[0]?'on':'')+'" onclick="go(\''+n[0]+'\')">'+n[1]+'</a>'}).join('')+'</nav>'}
+    else h+='<nav></nav>';
+    h+='<span style="font-size:14px">'+esc(sess.name)+' <small style="color:var(--mut)">('+ROLES[sess.role]+')</small></span><button class="link" onclick="logout()">تسجيل الخروج</button>';
+  }else h+='<span style="color:var(--mut);font-size:13px">منظومة صيانة المنازل</span>';
+  $('#hd').innerHTML=h+'</div>';
+}
+function logout(){sess=null;save('ho_sess',null);users=[];orders=[];tickets=[];calls=[];aud=[];staffData=[];exps=[];go('login')}
+
+/* ---- تسجيل الدخول ---- */
+function vLogin(){
+  var cust=roleSel==='customer';
+  $('#app').innerHTML='<div class="auth"><div class="card"><h1>تسجيل الدخول</h1><p class="sub">اختار نوع حسابك الأول</p>'+
+  '<div class="roles">'+Object.keys(ROLES).map(function(r){return '<button class="'+(r===roleSel?'on':'')+'" onclick="roleSel=\''+r+'\';vLogin()">'+ROLES[r]+'</button>'}).join('')+'</div>'+
+  '<label>البريد الإلكتروني</label><input id="em" type="email" dir="ltr" placeholder="name@example.com">'+
+  '<label>كلمة المرور</label><input id="pw" type="password" dir="ltr">'+
+  '<div class="err" id="er"></div><button class="btn" onclick="doLogin()">دخول</button>'+
+  (cust?'<p style="text-align:center;margin:14px 0 0"><button class="link" onclick="go(\'forgot\')">نسيت كلمة المرور؟</button> · <button class="link" onclick="go(\'register\')">إنشاء حساب جديد</button></p>'
+  :'<p class="sub" style="margin-top:14px">حسابات '+ROLES[roleSel]+' بيعملها الأدمن بس – مفيش تسجيل جديد.</p>')+
+  '</div></div>';
+}
+
+
+/* ---- إنشاء حساب عميل ---- */
+function pwRules(p){return[[p.length>=8,'8 حروف على الأقل'],[/[A-Za-z]/.test(p),'حرف واحد على الأقل'],[/\d/.test(p),'رقم واحد على الأقل'],[/[^A-Za-z0-9]/.test(p),'رمز خاص (@#$%)']]}
+function rulesHtml(p){return pwRules(p).map(function(r){return '<li class="'+(r[0]?'y':'')+'">'+(r[0]?'✓ ':'○ ')+r[1]+'</li>'}).join('')}
+function vRegister(){
+  $('#app').innerHTML='<div class="auth"><div class="card"><h1>إنشاء حساب سكني جديد</h1><p class="sub">سجّل بياناتك وابدأ اطلب الصيانة</p>'+
+  '<h2>البيانات الشخصية</h2><label>الاسم الكامل</label><input id="rn">'+
+  '<label>رقم الموبايل</label><input id="rp" dir="ltr" placeholder="+20 1xx xxx xxxx" inputmode="tel">'+
+  '<label>البريد الإلكتروني</label><input id="re" type="email" dir="ltr">'+
+  '<h2 style="margin-top:20px">عنوان السكن الأساسي</h2>'+
+  '<div class="row"><div><label>المدينة</label><select id="rc"><option>دمياط الجديدة</option><option>دمياط (القديمة)</option></select></div><div><label>الحي</label><input id="rd"></div></div>'+
+  '<label>اسم الشارع</label><input id="rs"><div class="row"><div><label>رقم العمارة</label><input id="rb"></div><div><label>الدور / الشقة</label><input id="rf"></div></div>'+
+  '<h2 style="margin-top:20px">أمان الحساب</h2><label>كلمة المرور</label><input id="r1" type="password" dir="ltr" oninput="$(\'#rl\').innerHTML=rulesHtml(this.value)">'+
+  '<ul class="rules" id="rl">'+rulesHtml('')+'</ul><label>تأكيد كلمة المرور</label><input id="r2" type="password" dir="ltr">'+
+  '<label style="font-weight:400;margin-top:16px"><input type="checkbox" id="rt" style="width:auto"> أوافق على الشروط والأحكام وسياسة الخصوصية</label>'+
+  '<div class="err" id="er"></div><button class="btn" onclick="doReg()">إنشاء الحساب</button>'+
+  '<p style="text-align:center;margin:14px 0 0"><button class="link" onclick="go(\'login\')">عندي حساب – تسجيل الدخول</button></p></div></div>';
+}
+
+
+/* ---- استعادة كلمة المرور + OTP ---- */
+var RS={email:''};
+function vForgot(){
+  $('#app').innerHTML='<div class="auth"><div class="card"><h1>استعادة كلمة المرور</h1><p class="sub">اكتب بريدك المسجل وهنبعتلك رمز تحقق</p>'+
+  '<label>البريد الإلكتروني</label><input id="fe" type="email" dir="ltr"><div class="err" id="er"></div>'+
+  '<button class="btn" onclick="sendOtp()">إرسال رمز التحقق</button><p style="text-align:center;margin:14px 0 0"><button class="link" onclick="go(\'login\')">العودة لتسجيل الدخول</button></p></div></div>';
+}
+
+function vReset(){
+  if(!RS.email){go('forgot');return}
+  $('#app').innerHTML='<div class="auth"><div class="card"><h1>التحقق وإعادة التعيين</h1><p class="sub">أدخل الرمز المكوّن من 4 أرقام. <b>(مرحلة التجربة: الرمز بيظهر في شاشة السيرفر. الـ SMS/الإيميل هيتربط بعدين)</b></p>'+
+  '<div class="otp">'+[0,1,2,3].map(function(i){return '<input maxlength="1" inputmode="numeric" class="od" oninput="if(this.value&&this.nextElementSibling)this.nextElementSibling.focus()">'}).join('')+'</div>'+
+  '<label>كلمة المرور الجديدة</label><input id="n1" type="password" dir="ltr" oninput="$(\'#nl\').innerHTML=rulesHtml(this.value)"><ul class="rules" id="nl">'+rulesHtml('')+'</ul>'+
+  '<label>تأكيد كلمة المرور</label><input id="n2" type="password" dir="ltr"><div class="err" id="er"></div>'+
+  '<button class="btn" onclick="doReset()">تأكيد كلمة المرور وتسجيل الدخول</button></div></div>';
+}
+
+
+/* ---- الرئيسية ---- */
+function me(){return users.filter(function(u){return u.email===sess.email})[0]}
+function mine(){return orders.filter(function(o){return o.email===sess.email})}
+function vHome(){
+  var m=mine(),open=m.filter(function(o){return o.status!=='مكتمل'}).length;
+  $('#app').innerHTML='<h1>أهلاً '+esc(sess.name)+'</h1><p class="sub">محتاج صيانة؟ اختار الخدمة وابعت طلبك في دقايق.</p>'+
+  '<div class="svc">'+SERVICES.map(function(s){return '<div class="card" onclick="W={desc:\'\',place:\'\',syms:[],when:\'\',addr:0,date:\'\',slot:0,step:1};go(\'new\')"><div class="ic">'+s[2]+'</div><h2>'+s[1]+'</h2><div class="sub" style="margin:0">'+s[3]+'</div></div>'}).join('')+'</div>'+
+  '<div class="card" style="margin-top:16px"><h2>ملخص حسابك</h2><div class="kv"><span>إجمالي الطلبات</span><b>'+m.length+'</b></div><div class="kv"><span>طلبات جارية</span><b>'+open+'</b></div></div>';
+}
+
+/* ---- طلب صيانة جديد (3 خطوات) ---- */
+function chips(list,sel,fn,multi){return '<div class="chips">'+list.map(function(x,i){var on=multi?sel.indexOf(x)>-1:sel===x;return '<span class="chip '+(on?'on':'')+'" onclick="'+fn+'('+i+')">'+x+'</span>'}).join('')+'</div>'}
+function setPlace(i){W.place=PLACES[i];vNew()}
+function setWhen(i){W.when=WHEN[i];vNew()}
+function togSym(i){var s=SYMS[i],k=W.syms.indexOf(s);k>-1?W.syms.splice(k,1):W.syms.push(s);vNew()}
+function keep(){var d=$('#wd');if(d)W.desc=d.value}
+function vNew(){
+  keep();var t=triage(),steps=['تفاصيل العطل','العنوان والموعد','المراجعة والتأكيد'];
+  var h='<h1>طلب صيانة جديد</h1><p class="sub">الخطوة '+W.step+' من 3</p><div class="steps">'+steps.map(function(s,i){return '<div class="'+(W.step===i+1?'on':'')+'">'+(i+1)+'. '+s+'</div>'}).join('')+'</div><div class="grid"><div class="card">';
+  if(W.step===1){
+    h+='<label>وصف المشكلة (اختياري)</label><textarea id="wd" oninput="W.desc=this.value;clearTimeout(window._t);window._t=setTimeout(refreshSP,600)" placeholder="مثال: في مية بتنزل من تحت الحوض ومش راضية تقف">'+esc(W.desc)+'</textarea>'+
+    '<label>المكان في البيت</label>'+chips(PLACES,W.place,'setPlace')+
+    '<label>إيه اللي بيحصل؟ (تقدر تختار أكتر من حاجة)</label>'+chips(SYMS,W.syms,'togSym',true)+
+    '<label>بدأت المشكلة إمتى؟</label>'+chips(WHEN,W.when,'setWhen')+vulBox()+attach()+
+    '<div class="err" id="er"></div><button class="btn" onclick="nxt(2)">المتابعة للعنوان والموعد</button>';
+  }else if(W.step===2){
+    var a=me().addrs;
+    h+='<label>عنوان الخدمة</label><select id="wa" onchange="W.addr=+this.value">'+a.map(function(x,i){return '<option value="'+i+'" '+(W.addr===i?'selected':'')+'>'+esc(x.city+' – '+x.district+' – '+x.street+(x.bld?' ع '+x.bld:''))+'</option>'}).join('')+'</select>'+
+    '<label>تاريخ الزيارة</label><input type="date" id="wdt" value="'+W.date+'" min="'+new Date().toISOString().slice(0,10)+'" onchange="W.date=this.value">'+
+    '<label>الفترة</label><div class="chips">'+SLOTS.map(function(s,i){return '<span class="chip '+(W.slot===i?'on':'')+'" onclick="W.slot='+i+';vNew()">'+s+'</span>'}).join('')+'</div>'+
+    '<div class="err" id="er"></div><div class="row"><button class="btn sec" onclick="W.step=1;vNew()">رجوع</button><button class="btn" onclick="nxt(3)">المراجعة</button></div>';
+  }else{
+    var ad=me().addrs[W.addr];
+    h+='<h2>راجع طلبك</h2><div class="kv"><span>الخدمة</span><b>'+svcName(t.svc)+'</b></div><div class="kv"><span>المكان</span><b>'+(W.place||'—')+'</b></div><div class="kv"><span>الأعراض</span><b>'+(W.syms.join('، ')||'—')+'</b></div><div class="kv"><span>الوصف</span><b>'+esc(W.desc||'—')+'</b></div><div class="kv"><span>العنوان</span><b>'+esc(ad.city+' – '+ad.district+' – '+ad.street)+'</b></div><div class="kv"><span>الموعد</span><b>'+W.date+' · '+SLOTS[W.slot]+'</b></div><div class="kv"><span>الأولوية المقترحة</span><b>'+(t.pr?pbadge(t.pr):'—')+'</b></div>'+
+    '<p class="sub" style="margin-top:12px">الفني بيحدد السعر بعد المعاينة وهيتم إبلاغك قبل أي شغل.</p><div class="row"><button class="btn sec" onclick="W.step=2;vNew()">رجوع</button><button class="btn" onclick="submitOrder()">تأكيد وإرسال الطلب</button></div>';
+  }
+  h+='</div><div id="sp">'+sidePanel(t)+'</div></div>';$('#app').innerHTML=h}function _dead(t){var h='';h+='<div class="card"><small style="color:var(--mut)">الأولوية المقترحة</small><h2>'+(t.pr?pbadge(t.pr):'في انتظار البيانات')+'</h2>'+
+  (t.pr?'':'<p class="sub">اكتب وصفاً أو اختار الأعراض وهيظهر الاقتراح هنا.</p>')+
+  '<label>نوع الخدمة</label><div class="kv" style="border:0"><b>'+svcName(t.svc)+'</b></div><p class="sub">دي قواعد مبدئية – هتتبدل بموديل الفرز الذكي لما نربطه.</p></div></div>';
+  $('#app').innerHTML=h;
+}
+function nxt(s){
+  keep();var er=$('#er'),t=triage();
+  if(s===2&&!t.pr&&!W.place){er.textContent='اكتب وصف أو اختار المكان والأعراض';return}
+  if(s===3&&!W.date){er.textContent='اختار تاريخ الزيارة';return}
+  W.step=s;vNew();
+}
+
+
+/* ---- طلباتي / الإشعارات / الحساب ---- */
+function vOrders(){
+  var m=mine().slice().reverse();
+  $('#app').innerHTML='<h1>طلباتي</h1><p class="sub">كل طلبات الصيانة وحالتها</p><div class="card tbl">'+(m.length?'<table><tr><th>رقم الطلب</th><th>الخدمة</th><th>الموعد</th><th>الأولوية</th><th>الحالة</th></tr>'+m.map(function(o){return '<tr><td>'+o.id+'</td><td>'+svcName(o.svc)+'</td><td>'+o.date+'</td><td>'+pbadge(o.pr)+'</td><td>'+o.status+'</td></tr>'}).join('')+'</table>':'<p class="sub">لسه معندكش طلبات. <button class="link" onclick="go(\'new\')">ابعت أول طلب</button></p>')+'</div>';
+}
+function vNotifs(){
+  var m=mine().slice().reverse();
+  $('#app').innerHTML='<h1>الإشعارات</h1><p class="sub">آخر التحديثات على طلباتك</p>'+(m.length?m.map(function(o){return '<div class="card">تم استلام طلبك <b>'+o.id+'</b> ('+svcName(o.svc)+') وهو دلوقتي <b>'+o.status+'</b>. <small style="color:var(--mut)">'+o.created+'</small></div>'}).join(''):'<div class="card sub">مفيش إشعارات لسه.</div>');
+}
+function vProfile(){
+  var u=me();
+  $('#app').innerHTML='<h1>الملف الشخصي</h1><p class="sub">بياناتك وإعدادات الحساب</p><div class="card"><div class="kv"><span>الاسم</span><b>'+esc(u.name)+'</b></div><div class="kv"><span>الموبايل</span><b dir="ltr">'+esc(u.phone)+'</b></div><div class="kv"><span>البريد</span><b dir="ltr">'+esc(u.email)+'</b></div></div>'+
+  '<div class="card"><h2>عناوين السكن</h2>'+u.addrs.map(function(a){return '<div class="kv"><span>'+esc(a.city)+'</span><b>'+esc(a.district+' – '+a.street+(a.bld?' ع '+a.bld:'')+(a.floor?' د '+a.floor:''))+'</b></div>'}).join('')+'</div><button class="btn sm" style="background:var(--bad);color:#fff" onclick="logout()">تسجيل الخروج</button>';
+}
+function vStaff(){
+  $('#app').innerHTML='<div class="card"><h1>لوحة '+ROLES[sess.role]+'</h1><p class="sub">دي صفحة مؤقتة – لوحة '+ROLES[sess.role]+' هتتبني بعد ما نخلّص جانب العميل.</p></div>';
+}
+
+/* ---- مشترك ---- */
+var tickets=[],aud=[],staffData=[];
+function staffList(){return staffData}
+
+var stat=(v,l)=>`<div class="stat"><b>${v}</b><small>${l}</small></div>`;
+var kvh=(a,b)=>`<div class="kv"><span>${a}</span><b>${b}</b></div>`;
+function tabs(list,cur,fn){return '<div class="tabs">'+list.map(t=>`<span class="chip ${cur===t[0]?'on':''}" onclick="${fn}('${t[0]}')">${t[1]}</span>`).join('')+'</div>'}
+var cuName=e=>(users.filter(u=>u.email===e)[0]||{name:'—'}).name;
+
+/* ---- فرز الطلب: قواعد مبدئية + شكل نتيجة الموديل (ثقة، بدائل، قاعدة أمان). هتتبدل بنداء FastAPI ---- */
+function triageLocal(){var o=triageOld(),t=(W.desc+' '+W.syms.join(' ')).toLowerCase(),n=(t.match(/مية|تسريب|حوض|سخان|صرف|كهرب|شرر|صعق|دهان|بوية|رطوبة|غاز|حريق|دخان/g)||[]).length;
+o.conf=o.svc?Math.min(95,40+n*18):0;
+o.safe=/غاز|حريق|دخان|صعق|شرر/.test(t)?(/غاز/.test(t)?'ريحة غاز':/حريق|دخان/.test(t)?'ريحة حريق أو دخان':'شرر أو صعقة كهربا'):'';
+if(o.safe)o.pr='emerg';if(W.svcO)o.svc=W.svcO;if(W.prO)o.pr=W.prO;
+o.alts=['plumb','elec','paint'].filter(k=>k!==o.svc);o.src='local';return o}
+function sidePanel(t){var c=t.conf,unsure=t.src==='model'?t.review:c<50,bg=t.pr==='emerg'?'#fde8e8':'var(--pr2)';
+var h=`<div class="card" style="padding:0;overflow:hidden"><div style="padding:14px;background:${bg};color:#14213d"><small>الأولوية المقترحة</small><h2 style="margin:0">${t.pr?PN[t.pr]:(t.review?'غير مؤكد':'في انتظار البيانات')}</h2></div><div style="padding:14px">`;
+if(!t.pr&&!t.review)return h+'<p class="sub">اكتب وصفاً أو اختار الأعراض وهيظهر الاقتراح هنا.</p></div></div>';
+h+=kvh('نوع الخدمة المقترح',unsure?'غير مؤكد':svcName(t.svc))+`<div class="bar2"><i style="width:${c}%"></i></div><small>ثقة الموديل في نوع الخدمة: ${c}%</small><br><small>المصدر: ${t.src==='model'?'موديل الفرز الذكي':'قواعد مبدئية (الموديل غير متصل)'}</small>`;
+if(t.safe)h+=`<p class="sub">الأولوية جاية من قاعدة أمان صريحة: ${t.safe}</p>`;
+if(t.svc&&!ENABLED[t.svc])h+='<div class="card" style="background:#e8eefc;color:#14213d;margin:10px 0">خدمة '+svcName(t.svc)+' لسه مش متاحة وهتتوفر قريباً.'+(t.pr==='emerg'?' ⚠ لو في خطر اخرج من المكان واطلب أرقام الطوارئ الرسمية.':'')+'</div>';
+if(unsure)h+='<div class="card" style="background:#fff1d6;color:#7a4a00;margin:10px 0">الموديل مش متأكد بما يكفي، راجع الاختيار تحت وأكّده.</div>';
+h+='<small>أقرب اختيارات تانية:</small><div class="chips">'+t.alts.map(k=>`<span class="chip" onclick="W.svcO='${k}';vNew()">${svcName(k)}</span>`).join('')+'</div>';
+h+=`<label>نوع الخدمة (تقدر تعدّل)</label><select onchange="W.svcO=this.value;vNew()">${ALL.map(s=>`<option value="${s[0]}" ${t.svc===s[0]?'selected':''}>${s[1]}${ENABLED[s[0]]?'':' (قريباً)'}</option>`).join('')}</select>`;
+h+=`<label>الأولوية (تقدر تعدّل)</label><select onchange="W.prO=this.value;vNew()">${Object.keys(PN).map(k=>`<option value="${k}" ${t.pr===k?'selected':''}>${PN[k]}</option>`).join('')}</select></div></div>`;return h}
+function attach(){return `<label>إرفاق الصور ومقاطع التوضيح (اختياري)</label><div style="border:2px dashed var(--bd);border-radius:12px;padding:16px;text-align:center"><input type="file" id="wf" accept="image/png,image/jpeg" multiple hidden onchange="addF(this.files)"><button class="btn sec sm" onclick="$('#wf').click()">اسحب الصور أو اضغط للتصفح</button><div class="sub" style="margin:6px 0 0">PNG, JPG – حد أقصى 10 ميجابايت للملف</div></div>`+(W.files||[]).map((f,i)=>`<div class="kv"><span>${esc(f.n)} · ${f.s} MB</span><button class="link" onclick="W.files.splice(${i},1);vNew()">حذف</button></div>`).join('')}
+function addF(fl){keep();W.files=W.files||[];[].forEach.call(fl,f=>{if(f.size<=1e7)W.files.push({n:f.name,s:(f.size/1e6).toFixed(1)})});vNew()}
+
+/* ---- العميل: الخدمات ---- */
+var SV='plumb',PR3=[['رسوم المعاينة','120 ج.م'],['الإصلاح والتركيب','حسب الفحص'],['قطع الغيار','حسب الصنف']];
+var SD={plumb:{t:'صيانة شبكات السباكة والمياه والسخانات',sc:['كشف التسريبات','ضغط المياه ومحابس الأمان','السخانات','انسداد الصرف']},
+elec:{t:'صيانة وتأسيس الكهرباء',sc:['فحص اللوحة والقواطع','الشرر والأحمال','الفيش والمفاتيح','الإنارة']},
+paint:{t:'الدهانات ومعالجة الرطوبة',sc:['معاينة الحوائط','علاج الرطوبة','الدهان الداخلي','الشروخ والتقشير']}};
+function setSV(k){SV=k;vServices()}
+function vServices(){var d=SD[SV]||{t:svcName(SV),sc:['معاينة وتشخيص العطل']};$('#app').innerHTML=`<h1>الخدمات</h1>${tabs(SERVICES.map(s=>[s[0],s[1]]),SV,'setSV')}<div class="grid"><div><div class="card"><h2>${d.t}</h2><p class="sub">الفني بيحدد السعر النهائي بعد المعاينة وبيتم إبلاغك قبل أي شغل.</p></div><div class="card"><h2>نطاق الخدمة: إيه اللي بيشمله الكشف؟</h2><div class="chips">${d.sc.map(x=>`<span class="chip">${x}</span>`).join('')}</div></div><div class="card tbl"><h2>جدول الأسعار التقديرية</h2><table><tr><th>البند</th><th>التقدير</th></tr>${PR3.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table></div></div><div class="card"><h2>طلب حجز الخدمة</h2>${kvh('رسوم المعاينة','120 ج.م')}${kvh('المنطقة','دمياط / دمياط الجديدة')}<button class="btn" onclick="W.svcO='${SV}';go('new')">اطلب الخدمة الآن</button></div></div>`}
+
+/* ---- العميل: التنبيهات / الحساب / الفواتير / الدعم ---- */
+var NF='all';
+function setNF(k){NF=k;vNotifs()}
+function setCh(k){var c=load('ho_ch',{sms:true,wa:false,em:true});c[k]=!c[k];save('ho_ch',c);vNotifs()}
+function vNotifs(){var m=mine().slice().reverse(),L=[];
+m.forEach(o=>{L.push(['ord','طلب '+o.id,'طلبك ('+svcName(o.svc)+') حالته: '+o.status+'.',o.created]);if(o.inv)L.push(['bill','فاتورة '+o.id,'الفاتورة بقيمة '+o.inv.total+' ج.م '+(o.inv.paid?'(مدفوعة)':'(مستحقة)'),o.created]);if(o.status==='مكتمل')L.push(['war','ضمان '+o.id,'الخدمة عليها ضمان 30 يوم من تاريخ الإغلاق.',o.created])});
+var f=NF==='all'?L:L.filter(x=>x[0]===NF),c=load('ho_ch',{sms:true,wa:false,em:true});
+$('#app').innerHTML=`<h1>مركز التنبيهات والإشعارات</h1><div class="stats">${stat(L.length,'إجمالي التنبيهات')}${stat(m.filter(o=>o.status!=='مكتمل').length,'طلبات جارية')}${stat(L.filter(x=>x[0]==='war').length,'ضمان ساري')}</div><div class="grid"><div>${tabs([['all','كل التنبيهات'],['ord','الطلبات والمواعيد'],['bill','الفواتير'],['war','الضمان']],NF,'setNF')}${f.map(x=>`<div class="card"><b>${x[1]}</b><div>${x[2]}</div><small style="color:var(--mut)">${x[3]}</small></div>`).join('')||'<div class="card sub">مفيش إشعارات.</div>'}</div><div class="card"><h2>قنوات التنبيه</h2>${[['sms','رسائل SMS'],['wa','واتساب'],['em','البريد الإلكتروني']].map(k=>`<label style="display:flex;justify-content:space-between;font-weight:400">${k[1]}<input type="checkbox" style="width:auto" ${c[k[0]]?'checked':''} onchange="setCh('${k[0]}')"></label>`).join('')}</div></div>`}
+function vProfile(){var u=me(),m=mine();$('#app').innerHTML=`<h1>الملف الشخصي وإعدادات الحساب</h1><div class="stats">${stat(m.length,'طلباتي')}${stat(m.filter(o=>o.status==='مكتمل').length,'مكتملة')}${stat(u.addrs.length,'عناوين محفوظة')}</div><div class="card"><h2>بيانات التواصل</h2><label>الاسم</label><input id="pn" value="${esc(u.name)}"><label>رقم الموبايل</label><input id="pp" dir="ltr" value="${esc(u.phone)}"><label>البريد</label><input value="${esc(u.email)}" disabled dir="ltr"><label>لغة التنبيهات</label><select id="pl"><option value="ar" ${u.lang==='ar'?'selected':''}>العربية</option><option value="en" ${u.lang==='en'?'selected':''}>English</option></select><div class="err ok" id="er"></div><button class="btn" onclick="saveProf()">حفظ التعديلات</button></div><div class="card"><h2>عناوين السكن</h2>${u.addrs.map(a=>kvh(esc(a.city),esc(a.district+' – '+a.street+(a.bld?' ع '+a.bld:'')+(a.floor?' د '+a.floor:'')))).join('')}</div><div class="card"><h2>تسجيل الخروج</h2><button class="btn" style="background:var(--bad);color:#fff" onclick="logout()">تسجيل الخروج من الحساب</button></div>`}
+
+function vInvoices(){var m=mine().filter(o=>o.inv);$('#app').innerHTML=`<h1>الفواتير والمدفوعات</h1><div class="card tbl">${m.length?'<table><tr><th>الطلب</th><th>الخدمة</th><th>الإجمالي</th><th>الحالة</th></tr>'+m.map(o=>`<tr><td>${o.id}</td><td>${svcName(o.svc)}</td><td>${o.inv.total} ج.م</td><td>${o.inv.paid?'مدفوعة':'مستحقة'}</td></tr>`).join('')+'</table>':'<p class="sub">الفواتير بتظهر بعد ما الفني يقفل الطلب.</p>'}</div>`}
+function vSupport(){var m=tickets.filter(t=>t.email===sess.email).reverse();$('#app').innerHTML=`<h1>الدعم والشكاوى</h1><p class="sub">ابعت استفسارك أو شكواك وفريق الكول سنتر هيرد عليك.</p><div class="card"><label>النوع</label><select id="tt"><option>شكوى</option><option>استفسار</option><option>اقتراح</option></select><label>التفاصيل</label><textarea id="tx"></textarea><div class="err" id="er"></div><button class="btn" onclick="sendTk()">إرسال</button></div><div class="card tbl"><h2>تذاكري</h2>${m.length?'<table><tr><th>الرقم</th><th>النوع</th><th>الحالة</th></tr>'+m.map(t=>`<tr><td>${t.id}</td><td>${t.type}</td><td>${t.status}</td></tr>`).join('')+'</table>':'<p class="sub">مفيش تذاكر.</p>'}</div>`}
+
+
+/* ---- الموظفين: الشريط الجانبي + صفحات كل دور ---- */
+var ST={tab:{},stg:1,parts:[]},CC={cls:'بلاغ عطل',pr:'عاجل'},PARTS=[['صمام أمان 3/4"',180],['طقم حشوات',35],['سيفون 50 مم',45]];
+var openO=()=>orders.filter(o=>o.status!=='مكتمل');
+var cur=()=>openO()[0]||{id:'HO-8841',svc:'plumb',pr:'urgent',desc:'تسريب مياه عالي الضغط من سخان المياه الرئيسي',place:'الحمام',date:'اليوم',slot:SLOTS[0],email:''};
+var partsT=()=>ST.parts.reduce((a,i)=>a+PARTS[i][1],0);
+var MENU={tech:[['tasks','المهام والمسار'],['order','أمر العمل الحالي'],['diag','الفحص وقطع الغيار'],['close','الإغلاق والتوقيع']],call:[['new','تسجيل بلاغ جديد'],['list','قائمة التذاكر']],finance:[['inv','الفواتير والمدفوعات']],admin:[['users','المستخدمون والصلاحيات'],['svc','الخدمات المتاحة'],['audit','سجل التدقيق']]};
+var chipsK=(l,k)=>'<div class="chips">'+l.map(v=>`<span class="chip ${CC[k]===v?'on':''}" onclick="CC['${k}']='${v}';vStaff()">${v}</span>`).join('')+'</div>';
+var PAGES={
+tech_tasks:()=>{var L=openO();return `<h1>المهام اليومية</h1><div class="stats">${stat(L.length||1,'مهام اليوم')}${stat(orders.filter(o=>o.status==='مكتمل').length,'مكتملة')}${stat('100%','التزام SLA')}${stat('38 كم','المسافة المقدرة')}</div><div class="card"><h2>المسار والجدول الزمني</h2>${(L.length?L:[cur()]).map((o,i)=>`<div class="kv"><span>${i+1}. ${o.id} – ${svcName(o.svc)}</span><b>${o.slot||''} ${pbadge(o.pr)}</b></div>`).join('')}</div>`},
+tech_order:()=>{var o=cur(),S=['الإسناد','في الطريق','الوصول','الفحص','الاعتماد'];return `<h1>أمر العمل ${o.id}</h1><div class="card"><h2>${svcName(o.svc)}: ${esc(o.desc||(o.syms||[]).join('، ')||'—')} ${pbadge(o.pr)}</h2><div class="steps">${S.map((s,i)=>`<div class="${ST.stg===i+1?'on':''}">${i+1}. ${s}</div>`).join('')}</div><button class="btn" onclick="ST.stg=Math.min(5,ST.stg+1);vStaff()">${ST.stg<3?'تأكيد الوصول لموقع العميل (Geofence)':'المرحلة التالية'}</button></div><div class="card"><h2>بيانات العميل</h2>${kvh('العميل',esc(cuName(o.email)))}${kvh('المكان',esc(o.place||'—'))}${kvh('الموعد',(o.date||'')+' · '+(o.slot||''))}${kvh('الأعراض',esc((o.syms||[]).join('، ')||'—'))}</div>`},
+tech_diag:()=>`<h1>الفحص والتشخيص</h1><div class="card"><h2>سجل الفحص الميداني</h2>${kvh('ضغط شبكة المياه','4.2 بار ✓')}${kvh('صمام الأمان','تالف – يلزم استبداله ⚠')}${kvh('توصيلات كهربائية (RCD)','سليمة ✓')}<label>ملاحظات الفني</label><textarea></textarea></div><div class="card"><h2>مخزن المركبة وقطع الغيار</h2>${PARTS.map((p,i)=>`<div class="kv"><span>${p[0]} – ${p[1]} ج.م</span><button class="btn sm" onclick="ST.parts.push(${i});vStaff()">إضافة</button></div>`).join('')}${kvh('إجمالي القطع',partsT()+' ج.م')}</div>`,
+tech_close:()=>`<h1>إغلاق الزيارة والتوقيع</h1><div class="card"><h2>الفاتورة</h2>${kvh('رسوم المعاينة','0 ج.م')}<label>أجور العمل (ج.م)</label><input id="lab" type="number" value="200" oninput="invT()">${kvh('قطع الغيار',partsT()+' ج.م')}${kvh('ضريبة 14%','<span id="tx14"></span>')}${kvh('الإجمالي','<span id="tt"></span>')}</div><div class="card"><h2>توقيع العميل</h2><canvas id="sg" width="320" height="110" style="border:1px dashed var(--bd);width:100%;touch-action:none"></canvas><button class="link" onclick="initSig()">مسح</button></div><button class="btn" onclick="closeOrder()">إغلاق أمر العمل واعتماد الفاتورة</button>`,
+call_new:()=>`<h1>تسجيل بلاغ / استفسار جديد</h1><div class="card"><label>العميل (اسم / موبايل)</label><input value="${esc(CC.n||'')}" oninput="CC.n=this.value"><label>تصنيف البلاغ</label>${chipsK(['بلاغ عطل','استفسار','شكوى سلوك فني','حجز نيابة عن العميل'],'cls')}<label>مستوى الأولوية</label>${chipsK(Object.values(PN),'pr')}<label>تفاصيل البلاغ</label><textarea oninput="CC.x=this.value">${esc(CC.x||'')}</textarea><div class="err" id="er"></div><button class="btn" onclick="saveCall()">حفظ البلاغ وإرساله</button></div>`,
+call_list:()=>`<h1>قائمة التذاكر</h1><div class="card tbl">${tickets.length?'<table><tr><th>الرقم</th><th>من</th><th>النوع</th><th>الأولوية</th><th>الحالة</th><th></th></tr>'+tickets.slice().reverse().map(t=>`<tr><td>${t.id}</td><td>${esc(t.from||'—')}</td><td>${t.type}</td><td>${PN[t.pr]||t.pr}</td><td>${t.status}</td><td>${t.status!=='تم الحل'?`<button class="btn sm" onclick="tkDone('${t.id}')">تم الحل</button>`:''}</td></tr>`).join('')+'</table>':'<p class="sub">مفيش تذاكر.</p>'}</div>`,
+fin_inv:()=>{var L=orders.filter(o=>o.inv),sum=L.reduce((a,o)=>a+o.inv.total,0),pd=L.filter(o=>o.inv.paid).reduce((a,o)=>a+o.inv.total,0);return `<h1>الفواتير والمدفوعات</h1><div class="stats">${stat(L.length,'فواتير')}${stat(sum.toFixed(0)+' ج.م','الإجمالي')}${stat(pd.toFixed(0)+' ج.م','المحصّل')}</div><div class="card tbl">${L.length?'<table><tr><th>الطلب</th><th>العميل</th><th>الإجمالي</th><th>الحالة</th><th></th></tr>'+L.map(o=>`<tr><td>${o.id}</td><td>${esc(cuName(o.email))}</td><td>${o.inv.total} ج.م</td><td>${o.inv.paid?'محصّلة':'مستحقة'}</td><td>${o.inv.paid?'':`<button class="btn sm" onclick="payO('${o.id}')">تحصيل</button>`}</td></tr>`).join('')+'</table>':'<p class="sub">مفيش فواتير لسه.</p>'}</div>`},
+admin_users:()=>{var S=staffList();return `<h1>المستخدمون والصلاحيات</h1><div class="stats">${stat(users.length,'عملاء')}${stat(S.length,'حسابات الموظفين')}${stat(S.filter(s=>s.active!==false).length,'نشطة')}</div><div class="card tbl"><h2>حسابات الموظفين</h2><table><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>الحالة</th><th></th></tr>${S.map((s,i)=>`<tr><td>${esc(s.name)}</td><td dir="ltr">${s.email}</td><td>${ROLES[s.role]}</td><td>${s.active===false?'موقوف':'نشط'}</td><td>${s.seeded?'':`<button class="btn sm" onclick="togStaff(${s.id})">${s.active===false?'تفعيل':'إيقاف'}</button>`}</td></tr>`).join('')}</table></div><div class="card"><h2>إضافة مستخدم جديد</h2><label>الاسم</label><input id="an"><label>البريد</label><input id="ae" dir="ltr"><label>الدور</label><select id="ar"><option value="tech">فني</option><option value="call">كول سنتر</option><option value="finance">مالي</option></select><label>كلمة مرور مؤقتة</label><input id="ap" dir="ltr"><div class="err" id="er"></div><button class="btn" onclick="addStaff()">إنشاء الحساب</button></div>`},
+admin_svc:()=>`<h1>الخدمات المتاحة</h1><p class="sub">الموديل بيتعرف على ${ALL.length} فئات. فعّل الخدمة لما يبقى عندك فنيين ليها.</p><div class="card">${ALL.map(s=>`<label style="display:flex;justify-content:space-between;font-weight:400">${s[2]} ${s[1]}<input type="checkbox" style="width:auto" ${ENABLED[s[0]]?'checked':''} onchange="togSvc('${s[0]}')"></label>`).join('')}</div>`,
+admin_audit:()=>`<h1>سجل التدقيق</h1><div class="card tbl">${aud.length?'<table><tr><th>الوقت</th><th>المستخدم</th><th>الإجراء</th></tr>'+aud.map(a=>`<tr><td>${a.t}</td><td>${esc(a.u)}</td><td>${esc(a.a)}</td></tr>`).join('')+'</table>':'<p class="sub">مفيش سجلات.</p>'}</div>`
+};
+function stab(t){ST.tab[sess.role]=t;vStaff()}
+function vStaff(){var r=sess.role,m=MENU[r],t=ST.tab[r]||m[0][0];$('#app').innerHTML=`<div class="shell"><aside class="side"><b style="display:block;margin-bottom:8px">${ROLES[r]}</b>${m.map(x=>`<a class="${x[0]===t?'on':''}" onclick="stab('${x[0]}')">${x[1]}</a>`).join('')}</aside><div class="main">${PAGES[r+'_'+t]()}</div></div>`;if($('#sg'))initSig();if($('#lab'))invT()}
+function invT(){var s=(+$('#lab').value||0)+partsT();$('#tx14').textContent=(s*.14).toFixed(2)+' ج.م';$('#tt').textContent=(s*1.14).toFixed(2)+' ج.م'}
+function initSig(){var c=$('#sg');if(!c)return;var x=c.getContext('2d'),d=0;x.clearRect(0,0,c.width,c.height);x.strokeStyle='#1d3a8a';x.lineWidth=2;
+var p=e=>{var r=c.getBoundingClientRect();return[(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
+c.onpointerdown=e=>{d=1;var q=p(e);x.beginPath();x.moveTo(q[0],q[1])};c.onpointermove=e=>{if(d){var q=p(e);x.lineTo(q[0],q[1]);x.stroke()}};c.onpointerup=()=>{d=0}}
+
+
+
+
+
+
+
+/* ---- ربط موديل الفرز (FastAPI POST /predict) – لو الموديل مش متصل بيرجع للقواعد المبدئية ---- */
+var ALL=[['plumb','سباكة','🚰','تسريبات، سخانات، صرف'],['elec','كهرباء','💡','أعطال، شرر، تركيبات'],['paint','دهانات وتشطيبات','🎨','دهانات، رطوبة، تقشير'],['ac','تكييف وتبريد','❄️','تكييف وثلاجات'],['carp','نجارة','🪚','أبواب، أقفال، دواليب'],['appl','أجهزة منزلية','🔌','غسالات، بوتجاز، أجهزة']];
+var ENABLED={plumb:1,elec:1,paint:1,ac:0,carp:0,appl:0};
+function syncSvc(){SERVICES.length=0;ALL.forEach(s=>{if(ENABLED[s[0]])SERVICES.push(s)})}
+function svcName(k){var s=ALL.filter(x=>x[0]===k)[0];return s?s[1]:'—'}
+var CATMAP={'سباكة':'plumb','كهرباء':'elec','دهانات وتشطيبات':'paint','تكييف وتبريد':'ac','نجارة':'carp','أجهزة منزلية':'appl'};
+var SYMC=['leak','nowater','gas','burn','spark','nopower','noise','broken','crack','lock','request'],LOCC=['kitchen','bath','living','bedroom','balcony','entrance','outside','other'],WHENC=['now','today','days','weeks'];
+var SYMN={gas:'ريحة غاز',burn:'ريحة حريق أو دخان',spark:'شرر أو صعقة كهربا'};
+var TR={key:'',res:null,fail:false,busy:false};
+function payload(){return{description:W.desc||'',location:LOCC[PLACES.indexOf(W.place)]||null,symptoms:W.syms.map(s=>SYMC[SYMS.indexOf(s)]),onset:WHENC[WHEN.indexOf(W.when)]||null,vulnerable:!!W.vul}}
+function askModel(p,key){if(TR.fail||TR.busy)return;TR.busy=true;
+api('/api/predict','POST',p)
+.then(j=>{TR.res=j;TR.key=key;TR.busy=false;if(location.hash==='#new'){if(document.activeElement&&document.activeElement.tagName==='TEXTAREA')refreshSP();else vNew()}})
+.catch(()=>{TR.fail=true;TR.busy=false;if(location.hash==='#new')refreshSP()})}
+function refreshSP(){var e=$('#sp');if(e)e.innerHTML=sidePanel(triage())}
+function fromApi(j){var o={src:'model',svc:CATMAP[j.category]||CATMAP[(j.top_categories[0]||{}).label]||'',pr:'',conf:Math.round((j.category_confidence||0)*100),review:!!j.needs_review,safe:''};
+o.pr=j.priority==='emergency'?'emerg':j.priority==='urgent'?'urgent':j.priority==='normal'?'norm':'';
+var m=/^rule:(.+)$/.exec(j.priority_source||'');if(m)o.safe=m[1].split(',').map(k=>SYMN[k]||k).join('، ');
+if(j.priority_source==='safety_guard')o.safe='حماية أمان: احتمال الطوارئ مرتفع';
+o.alts=(j.top_categories||[]).map(c=>CATMAP[c.label]).filter(k=>k&&k!==o.svc);
+if(W.svcO)o.svc=W.svcO;if(W.prO)o.pr=W.prO;return o}
+function triage(){var p=payload(),key=JSON.stringify(p);
+if(!p.description.trim()&&!p.symptoms.length)return triageLocal();
+if(TR.res&&TR.key===key)return fromApi(TR.res);
+askModel(p,key);return triageLocal()}
+function vulBox(){return `<label style="display:flex;gap:8px;align-items:center;font-weight:400;margin-top:14px"><input type="checkbox" style="width:auto" ${W.vul?'checked':''} onchange="keep();W.vul=this.checked;vNew()"> في أطفال أو كبار سن أو مرضى في البيت؟</label>`}
+
+syncSvc();
+
+/* ---- الكول سنتر: لوحة المهام، بحث العميل 360، تسجيل بلاغ، تفاصيل التذكرة والتصعيد، سجل المكالمات ---- */
+var calls=[],Q='',PO={emerg:0,urgent:1,mid:2,norm:3};
+var SLA={'طوارئ':15,'عاجل':60,'متوسط':240,'عادي':1440},fmtM=m=>m<120?m+' دقيقة':(m/60)+' ساعة';
+var techName=e=>(staffData.filter(s=>s.email===e)[0]||{name:'غير مسند'}).name;
+var nowT=()=>new Date().toLocaleString('ar-EG');
+function tlog(t,a){(t.log=t.log||[]).push({t:nowT(),a:a})}
+function slaTxt(t){var m=SLA[PN[t.pr]||t.pr]||240,r=Math.round(((t.ts||Date.now())+m*60000-Date.now())/60000);return t.status==='تم الحل'?'—':r>=0?'متبقي '+r+' دقيقة':'تجاوز الـ SLA بـ '+(-r)+' دقيقة'}
+openO=()=>orders.filter(o=>o.status!=='مكتمل'&&(sess.role!=='tech'||o.tech===sess.email));
+MENU.call=[['dash','لوحة الاتصالات والمهام'],['find','البحث السريع عن العملاء'],['new','تسجيل بلاغ جديد'],['tk','تفاصيل التذكرة والتصعيد'],['log','سجل المكالمات']];
+CC={cls:'بلاغ عطل جديد',pr:'عاجل',act:['إخطار الفني فوراً','إرسال SMS للعميل']};
+PAGES.call_dash=()=>{var W2=orders.filter(o=>o.status==='قيد المراجعة').sort((a,b)=>PO[a.pr]-PO[b.pr]),T=staffData.filter(s=>s.role==='tech'&&s.active!==false),
+AS=orders.filter(o=>o.status==='تم الإسناد'||o.status==='إتمام محتمل'),OT=tickets.filter(t=>t.status!=='تم الحل');
+return `<h1>لوحة الاتصالات والمهام</h1><div class="stats">${stat(W2.length,'طلبات تنتظر الإسناد')}${stat(AS.length,'طلبات مسندة')}${stat(OT.length,'تذاكر مفتوحة')}${stat(calls.length,'مكالمات مسجلة')}</div>
+<div class="card tbl"><h2>طلبات تنتظر الإسناد (الأعلى أولوية أولاً)</h2>${W2.length?'<table><tr><th>الطلب</th><th>العميل</th><th>الخدمة</th><th>الأولوية</th><th>الموعد</th><th>إسناد لفني</th></tr>'+W2.map(o=>`<tr><td>${o.id}</td><td>${esc(cuName(o.email))}</td><td>${svcName(o.svc)}</td><td>${pbadge(o.pr)}</td><td>${o.date||''}</td><td>${T.length?`<select id="as_${o.id}" style="width:auto">${T.map(t=>`<option value="${t.email}">${esc(t.name)}</option>`).join('')}</select> <button class="btn sm" onclick="assignO('${o.id}')">إسناد</button>`:'مفيش فنيين نشطين'}</td></tr>`).join('')+'</table>':'<p class="sub">مفيش طلبات منتظرة.</p>'}</div>
+<div class="card tbl"><h2>الطلبات المسندة – نتيجة الاتصال بالفني</h2>${AS.length?'<table><tr><th>الطلب</th><th>الفني</th><th>الحالة</th><th>نتيجة الاتصال</th></tr>'+AS.map(o=>`<tr><td>${o.id}</td><td>${esc(techName(o.tech))}</td><td>${o.status}</td><td>${['وافق','رفض','مفيش رد'].map(x=>`<button class="btn sec sm" onclick="orderCall('${o.id}','${x}')">${x}</button>`).join(' ')}</td></tr>`).join('')+'</table>':'<p class="sub">مفيش طلبات مسندة.</p>'}</div>
+<div class="card tbl"><h2>تذاكر مفتوحة</h2>${OT.length?OT.map(t=>`<div class="kv" style="cursor:pointer" onclick="ST.tk='${t.id}';stab('tk')"><span>${t.id} – ${esc(t.from||'—')} (${t.type})</span><b>${slaTxt(t)}</b></div>`).join(''):'<p class="sub">مفيش تذاكر مفتوحة.</p>'}</div>`};
+
+
+function findHtml(){var q=Q.trim().toLowerCase();if(!q)return '<p class="sub">اكتب اسم العميل أو موبايله أو بريده أو رقم الطلب.</p>';
+var U=users.filter(u=>[u.name,u.phone,u.email].join(' ').toLowerCase().includes(q)||orders.some(o=>o.email===u.email&&o.id.toLowerCase()===q));
+if(!U.length)return '<div class="card sub">مفيش نتايج.</div>';
+return U.map(u=>{var O=orders.filter(o=>o.email===u.email),T=tickets.filter(t=>t.email===u.email),a=u.addrs[0]||{};
+return `<div class="card"><h2>${esc(u.name)}</h2>${kvh('الموبايل','<span dir="ltr">'+esc(u.phone)+'</span>')}${kvh('البريد','<span dir="ltr">'+esc(u.email)+'</span>')}${kvh('العنوان',esc((a.city||'')+' – '+(a.district||'')+' – '+(a.street||'')))}
+<div class="stats" style="margin-top:12px">${stat(O.length,'طلبات')}${stat(O.filter(o=>o.status!=='مكتمل').length,'جارية')}${stat(O.filter(o=>o.inv&&!o.inv.paid).length,'فواتير مستحقة')}${stat(T.length,'تذاكر')}</div>
+<button class="btn sm" onclick="startCall('${u.email}')">تسجيل بلاغ لهذا العميل</button>
+<div class="tbl" style="margin-top:12px"><table><tr><th>الطلب</th><th>الخدمة</th><th>الحالة</th><th>الأولوية</th></tr>${O.map(o=>`<tr><td>${o.id}</td><td>${svcName(o.svc)}</td><td>${o.status}</td><td>${pbadge(o.pr)}</td></tr>`).join('')||'<tr><td colspan="4">مفيش طلبات</td></tr>'}</table></div></div>`}).join('')}
+function findR(){$('#fr').innerHTML=findHtml()}
+function startCall(e){var u=users.filter(x=>x.email===e)[0];CC.n=u.name+' – '+u.phone;CC.cust=e;stab('new')}
+PAGES.call_find=()=>`<h1>البحث السريع عن العملاء</h1><div class="card"><input placeholder="اسم / موبايل / بريد / رقم طلب" value="${esc(Q)}" oninput="Q=this.value;findR()"></div><div id="fr">${findHtml()}</div>`;
+function togAct(a){var i=CC.act.indexOf(a);i>-1?CC.act.splice(i,1):CC.act.push(a);vStaff()}
+PAGES.call_new=()=>`<h1>تسجيل بلاغ / استفسار جديد</h1><div class="grid"><div class="card"><label>العميل (اسم / موبايل)</label><input list="ul" value="${esc(CC.n||'')}" oninput="CC.n=this.value;CC.cust=(users.filter(u=>u.name+' – '+u.phone===this.value)[0]||{}).email||''"><datalist id="ul">${users.map(u=>`<option value="${esc(u.name+' – '+u.phone)}">`).join('')}</datalist>
+<label>تصنيف البلاغ</label>${chipsK(['بلاغ عطل جديد','استفسار','اعتراض على فاتورة / تسعير','شكوى سلوك فني','حجز نيابة عن العميل'],'cls')}
+<label>مستوى الأولوية</label>${chipsK(Object.values(PN),'pr')}<p class="sub">SLA للمعالجة: ${fmtM(SLA[CC.pr])}</p>
+<label>الطلب المرتبط (اختياري)</label><select onchange="CC.ord=this.value"><option value="">— بدون —</option>${orders.filter(o=>o.status!=='مكتمل').map(o=>`<option value="${o.id}" ${CC.ord===o.id?'selected':''}>${o.id} – ${svcName(o.svc)}</option>`).join('')}</select>
+<label>تفاصيل البلاغ</label><textarea oninput="CC.x=this.value">${esc(CC.x||'')}</textarea>
+<label>الإجراءات الفورية</label><div class="chips">${['إخطار الفني فوراً','إرسال SMS للعميل','تصعيد للمشرف'].map(a=>`<span class="chip ${CC.act.indexOf(a)>-1?'on':''}" onclick="togAct('${a}')">${a}</span>`).join('')}</div>
+<div class="err" id="er"></div><button class="btn" onclick="saveCall()">حفظ البلاغ وإرساله</button></div>
+<div class="card"><h2>ردود جاهزة</h2><p class="sub">السعر النهائي بيحدده الفني بعد المعاينة وهيتم إبلاغ العميل قبل أي شغل.</p><p class="sub">الدفع: 50% مقدم والباقي بعد الخدمة (فيزا / فودافون كاش / إنستا باي).</p><p class="sub">الخدمة عليها ضمان 30 يوم من تاريخ الإغلاق.</p></div></div>`;
+
+
+PAGES.call_tk=()=>{var L=tickets.slice().reverse(),t=tickets.filter(x=>x.id===ST.tk)[0]||L[0];if(!t)return '<h1>تفاصيل التذكرة والتصعيد</h1><div class="card sub">مفيش تذاكر لسه.</div>';
+var o=orders.filter(x=>x.id===t.ord)[0];
+return `<h1>التذكرة ${t.id}</h1><div class="grid"><div><div class="card"><h2>${esc(t.type)} · ${PN[t.pr]||t.pr} · ${t.status}</h2>${kvh('العميل',esc(t.from||'—'))}${kvh('الـ SLA',slaTxt(t))}${kvh('الطلب المرتبط',t.ord?t.ord+(o?' ('+o.status+')':''):'—')}${o?kvh('الفني المسند',esc(techName(o.tech))):''}<p>${esc(t.text||'')}</p></div>
+<div class="card"><h2>إجراءات الكول سنتر</h2><label>نتيجة الاتصال بالفني</label><div class="chips">${['وافق','رفض','مفيش رد'].map(x=>`<span class="chip" onclick="techCall('${t.id}','${x}')">${x}</span>`).join('')}</div>
+<label>ملاحظة</label><input id="nt"><div class="chips" style="margin-top:12px"><button class="btn sec sm" onclick="addNote('${t.id}')">إضافة ملاحظة</button><button class="btn sm" onclick="escal('${t.id}')">تصعيد للأدمن</button><button class="btn sm" onclick="tkDone('${t.id}')">تم الحل</button></div></div>
+<div class="card"><h2>السجل الزمني</h2>${(t.log||[]).slice().reverse().map(l=>kvh(l.t,esc(l.a))).join('')||'<p class="sub">مفيش إجراءات.</p>'}</div></div>
+<div class="card"><h2>كل التذاكر</h2>${L.map(x=>`<div class="kv" style="cursor:pointer" onclick="ST.tk='${x.id}';vStaff()"><span>${x.id} – ${esc(x.from||'—')}</span><b>${x.status}</b></div>`).join('')}</div></div>`};
+function tk_(id){return tickets.filter(x=>x.id===id)[0]}
+
+
+
+
+PAGES.call_log=()=>`<h1>سجل المكالمات والمحادثات</h1><div class="stats">${stat(calls.length,'إجمالي المكالمات')}${stat(calls.filter(c=>c.dir==='وارد').length,'وارد')}${stat(calls.filter(c=>c.dir==='صادر').length,'صادر')}</div><div class="card tbl">${calls.length?'<table><tr><th>الوقت</th><th>الاتجاه</th><th>الطرف</th><th>الموضوع</th><th>النتيجة</th></tr>'+calls.slice().reverse().map(c=>`<tr><td>${new Date(c.ts).toLocaleString('ar-EG')}</td><td>${c.dir}</td><td>${esc(c.who)}</td><td>${esc(c.note)}</td><td>${esc(c.out)}</td></tr>`).join('')+'</table>':'<p class="sub">مفيش مكالمات مسجلة.</p>'}</div>`;
+
+/* ---- المالي: الإيرادات، الفواتير + ETA (تجريبي)، رواتب الفنيين، السجل المحاسبي والتكاليف ---- */
+var exps=[],RATE=60,PAYM=['فيزا','فودافون كاش','إنستا باي'],EXPK=['وقود وانتقالات','قطع غيار ومخزون','رواتب إدارية','تسويق','أخرى'];
+var iSub=o=>o.inv.sub!=null?o.inv.sub:+(o.inv.total/1.14).toFixed(2),iLab=o=>o.inv.lab!=null?o.inv.lab:iSub(o),iTax=o=>o.inv.tax!=null?o.inv.tax:+(o.inv.total-iSub(o)).toFixed(2);
+var M=n=>(+n).toFixed(2)+' ج.م';
+MENU.finance=[['dash','لوحة الإيرادات والمبيعات'],['inv','الفواتير والإرسال الإلكتروني (ETA)'],['pay','رواتب ومستحقات الفنيين'],['led','التدقيق المحاسبي وتكاليف التشغيل']];
+
+
+
+PAGES.finance_dash=()=>{var L=orders.filter(o=>o.inv),P=L.filter(o=>o.inv.paid),by={};L.forEach(o=>by[o.svc]=(by[o.svc]||0)+iSub(o));var mx=Math.max(1,...Object.values(by));
+return `<h1>لوحة الإيرادات والمبيعات</h1><div class="stats">${stat(L.length,'فواتير')}${stat(M(L.reduce((a,o)=>a+iSub(o),0)),'الإيراد قبل الضريبة')}${stat(M(P.reduce((a,o)=>a+o.inv.total,0)),'المحصّل')}${stat(M(L.filter(o=>!o.inv.paid).reduce((a,o)=>a+o.inv.total,0)),'مستحق')}</div>
+<div class="card"><h2>الإيراد حسب الخدمة</h2>${Object.keys(by).map(k=>kvh(svcName(k),M(by[k]))+`<div class="bar2"><i style="width:${by[k]/mx*100}%"></i></div>`).join('')||'<p class="sub">مفيش إيرادات لسه.</p>'}</div>
+<div class="card"><h2>طرق الدفع</h2>${PAYM.map(m=>kvh(m,P.filter(o=>o.inv.method===m).length+' فاتورة')).join('')}</div>`};
+PAGES.finance_inv=()=>{var L=orders.filter(o=>o.inv).reverse(),d=L.filter(o=>o.id===ST.inv)[0]||L[0];
+return `<h1>الفواتير والإرسال الإلكتروني (ETA)</h1><p class="sub">الإرسال لمصلحة الضرائب هنا تجريبي (بيولّد رقم تجريبي) لحد ما نربط الـ API الحقيقي.</p><div class="card tbl">${L.length?'<table><tr><th>الفاتورة</th><th>العميل</th><th>الإجمالي</th><th>الدفع</th><th>ETA</th></tr>'+L.map(o=>`<tr><td><a class="link" onclick="ST.inv='${o.id}';vStaff()">INV-${o.id}</a></td><td>${esc(cuName(o.email))}</td><td>${M(o.inv.total)}</td><td>${o.inv.paid?'محصّلة ('+(o.inv.method||'')+')':`<select id="pm_${o.id}" style="width:auto">${PAYM.map(m=>`<option>${m}</option>`).join('')}</select> <button class="btn sm" onclick="payO('${o.id}',$('#pm_${o.id}').value)">تحصيل</button>`}</td><td>${o.inv.eta?'مرسلة (تجريبي)':`<button class="btn sec sm" onclick="etaO('${o.id}')">إرسال</button>`}</td></tr>`).join('')+'</table>':'<p class="sub">مفيش فواتير لسه. بتظهر بعد ما الفني يقفل الطلب.</p>'}</div>
+${d?`<div class="card"><h2>تفاصيل INV-${d.id}</h2>${kvh('أجور العمل',M(iLab(d)))}${kvh('قطع الغيار',M(d.inv.parts||0))}${kvh('الإجمالي قبل الضريبة',M(iSub(d)))}${kvh('ضريبة 14%',M(iTax(d)))}${kvh('الإجمالي',M(d.inv.total))}${d.inv.eta?kvh('رقم ETA التجريبي','<span dir="ltr">'+d.inv.eta.uuid+'</span>'):''}</div>`:''}`};
+function payRows(){return staffData.filter(s=>s.role==='tech').map(t=>{var O=orders.filter(o=>o.inv&&o.inv.paid&&o.tech===t.email),c=x=>x.reduce((a,o)=>a+iLab(o)*RATE/100,0),lab=O.reduce((a,o)=>a+iLab(o),0),pd=c(O.filter(o=>o.paidOut));return{t:t,n:O.length,lab:lab,c:c(O),paid:pd,due:c(O)-pd}})}
+
+function exportPay(){var r=[['الفني','عدد الأوامر','أجور العمل','العمولة','المصروف','المستحق']];payRows().forEach(x=>r.push([x.t.name,x.n,x.lab,x.c,x.paid,x.due]));
+var b=new Blob(['\ufeff'+r.map(x=>x.join(',')).join('\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='payroll.csv';a.click()}
+PAGES.finance_pay=()=>{var R=payRows();return `<h1>رواتب ومستحقات الفنيين</h1><div class="stats">${stat(R.length,'فنيين')}${stat(M(R.reduce((a,r)=>a+r.due,0)),'مستحقات لم تُصرف')}${stat(M(R.reduce((a,r)=>a+r.paid,0)),'تم صرفه')}</div>
+<div class="card"><label>نسبة عمولة الفني من أجور العمل (%) – قيمة مبدئية تعدّلها</label><input type="number" value="${RATE}" onchange="setRate(this.value)"><p class="sub">العمولة بتتحسب على الفواتير المحصّلة بس.</p></div>
+<div class="card tbl"><table><tr><th>الفني</th><th>أوامر محصّلة</th><th>أجور العمل</th><th>العمولة</th><th>مصروف</th><th>مستحق</th><th></th></tr>${R.map(r=>`<tr><td>${esc(r.t.name)}</td><td>${r.n}</td><td>${M(r.lab)}</td><td>${M(r.c)}</td><td>${M(r.paid)}</td><td>${M(r.due)}</td><td>${r.due>0?`<button class="btn sm" onclick="payTech('${r.t.email}')">صرف المستحقات</button>`:''}</td></tr>`).join('')||'<tr><td colspan="7">مفيش فنيين</td></tr>'}</table></div><button class="btn sec sm" onclick="exportPay()">تصدير CSV</button>`};
+function ledger(){var E=[];orders.filter(o=>o.inv).forEach(o=>{var ts=o.inv.ts||0;E.push({ts:ts,d:'إيراد خدمة '+o.id,dr:0,cr:iSub(o),k:'إيراد'});E.push({ts:ts,d:'ضريبة قيمة مضافة '+o.id,dr:0,cr:iTax(o),k:'ضريبة'});
+if(o.inv.paid)E.push({ts:o.inv.paidAt||ts,d:'تحصيل '+o.id+' ('+(o.inv.method||'')+')',dr:o.inv.total,cr:0,k:'تحصيل'});
+if(o.paidOut)E.push({ts:o.paidOutAt||ts,d:'عمولة '+techName(o.tech)+' – '+o.id,dr:+(iLab(o)*RATE/100).toFixed(2),cr:0,k:'عمولات فنيين'})});
+exps.forEach(x=>E.push({ts:x.ts,d:x.d,dr:x.amt,cr:0,k:x.k}));return E.sort((a,b)=>b.ts-a.ts)}
+
+PAGES.finance_led=()=>{var E=ledger(),rev=E.filter(e=>e.k==='إيراد').reduce((a,e)=>a+e.cr,0),vat=E.filter(e=>e.k==='ضريبة').reduce((a,e)=>a+e.cr,0),ex=E.filter(e=>e.k!=='تحصيل').reduce((a,e)=>a+e.dr,0),by={};
+E.filter(e=>e.k!=='تحصيل'&&e.dr).forEach(e=>by[e.k]=(by[e.k]||0)+e.dr);
+return `<h1>التدقيق المحاسبي وتكاليف التشغيل</h1><p class="sub">سجل حركات مبسّط (مش دفتر أستاذ بقيد مزدوج كامل).</p><div class="stats">${stat(M(rev),'الإيرادات')}${stat(M(vat),'ضريبة مستحقة')}${stat(M(ex),'المصروفات')}${stat(M(rev-ex),'صافي قبل الضريبة')}</div>
+<div class="card"><h2>تحليل التكاليف</h2>${Object.keys(by).map(k=>kvh(k,M(by[k]))).join('')||'<p class="sub">مفيش مصروفات.</p>'}</div>
+<div class="card"><h2>تسجيل مصروف تشغيل</h2><label>الوصف</label><input id="xd"><div class="row"><div><label>المبلغ (ج.م)</label><input id="xa" type="number"></div><div><label>الفئة</label><select id="xk">${EXPK.map(k=>`<option>${k}</option>`).join('')}</select></div></div><div class="err" id="er"></div><button class="btn" onclick="addExp()">إضافة</button></div>
+<div class="card tbl"><h2>سجل الحركات</h2>${E.length?'<table><tr><th>الوقت</th><th>البيان</th><th>الفئة</th><th>مدين</th><th>دائن</th></tr>'+E.map(e=>`<tr><td>${e.ts?new Date(e.ts).toLocaleString('ar-EG'):'—'}</td><td>${esc(e.d)}</td><td>${e.k}</td><td>${e.dr?M(e.dr):''}</td><td>${e.cr?M(e.cr):''}</td></tr>`).join('')+'</table>':'<p class="sub">مفيش حركات.</p>'}</div>`};
+
+
+/* ================= الاتصال بالسيرفر (FastAPI) ================= */
+var API=window.HOMEOPS_API||'';
+function toLogin(){if(location.hash==='#login')route();else go('login')}
+function api(path,method,body){
+  var h={'Content-Type':'application/json'};if(sess&&sess.token)h.Authorization='Bearer '+sess.token;
+  return fetch(API+path,{method:method||'GET',headers:h,body:body?JSON.stringify(body):undefined}).then(function(r){
+    return r.json().catch(function(){return{}}).then(function(j){
+      if(!r.ok){
+        if(r.status===401&&sess&&path.indexOf('/api/auth/')<0){sess=null;save('ho_sess',null);toLogin()}
+        throw new Error(typeof j.detail==='string'?j.detail:'حصل خطأ، جرّب تاني')}
+      return j})},function(){throw new Error('مفيش اتصال بالسيرفر، اتأكد إنه شغال')})}
+function refresh(){return api('/api/state').then(function(s){
+  users=s.users||[];orders=s.orders||[];tickets=s.tickets||[];calls=s.calls||[];aud=s.audit||[];staffData=s.staff||[];exps=s.expenses||[];
+  RATE=s.rate;ENABLED=s.enabled;syncSvc()})}
+function startSess(r){sess={role:r.user.role,name:r.user.name,email:r.user.email,token:r.token};save('ho_sess',sess)}
+function dropSess(){sess=null;save('ho_sess',null)}
+function act(path,body){return api(path,'POST',body||{}).then(refresh).then(function(){vStaff()}).catch(function(e){alert(e.message)})}
+
+function doLogin(){
+  var em=$('#em').value.trim().toLowerCase(),pw=$('#pw').value,er=$('#er');
+  if(!em||!pw){er.textContent='اكتب البريد وكلمة المرور';return}
+  er.textContent='';
+  api('/api/auth/login','POST',{role:roleSel,email:em,password:pw}).then(function(r){startSess(r);return refresh()})
+  .then(function(){go(roleSel==='customer'?'home':'staff')}).catch(function(e){dropSess();er.textContent=e.message});
+}
+function doReg(){
+  var g=function(i){return $('#'+i).value.trim()},er=$('#er'),p=$('#r1').value;
+  if(!g('rn')||!g('rp')||!g('re')||!g('rs')||!g('rd')){er.textContent='كمّل كل البيانات المطلوبة';return}
+  if(!/^\S+@\S+\.\S+$/.test(g('re'))){er.textContent='البريد الإلكتروني مش صحيح';return}
+  if(!/^(\+?20|0)?1[0125]\d{8}$/.test(g('rp').replace(/\s/g,''))){er.textContent='رقم الموبايل مش صحيح';return}
+  if(pwRules(p).some(function(r){return !r[0]})){er.textContent='كلمة المرور لا تحقق الشروط';return}
+  if(p!==$('#r2').value){er.textContent='كلمتا المرور مش متطابقتين';return}
+  if(!$('#rt').checked){er.textContent='لازم توافق على الشروط';return}
+  api('/api/auth/register','POST',{name:g('rn'),phone:g('rp'),email:g('re').toLowerCase(),password:p,lang:'ar',addr:{city:$('#rc').value,district:g('rd'),street:g('rs'),bld:g('rb'),floor:g('rf')}})
+  .then(function(r){startSess(r);return refresh()}).then(function(){go('home')}).catch(function(e){dropSess();er.textContent=e.message});
+}
+function sendOtp(){
+  var e=$('#fe').value.trim().toLowerCase();
+  if(!/^\S+@\S+\.\S+$/.test(e)){$('#er').textContent='اكتب بريد صحيح';return}
+  api('/api/auth/forgot','POST',{email:e}).then(function(){RS.email=e;go('reset')}).catch(function(x){$('#er').textContent=x.message});
+}
+function doReset(){
+  var code=Array.prototype.map.call(document.querySelectorAll('.od'),function(i){return i.value}).join(''),p=$('#n1').value,er=$('#er');
+  if(code.length<4){er.textContent='اكتب رمز التحقق (4 أرقام)';return}
+  if(pwRules(p).some(function(r){return !r[0]})){er.textContent='كلمة المرور لا تحقق الشروط';return}
+  if(p!==$('#n2').value){er.textContent='كلمتا المرور مش متطابقتين';return}
+  api('/api/auth/reset','POST',{email:RS.email,code:code,password:p}).then(function(r){RS.email='';startSess(r);return refresh()})
+  .then(function(){go('home')}).catch(function(e){dropSess();er.textContent=e.message});
+}
+function saveProf(){var er=$('#er');er.className='err';
+  api('/api/me','PUT',{name:$('#pn').value.trim(),phone:$('#pp').value.trim(),lang:$('#pl').value}).then(function(u){sess.name=u.name;save('ho_sess',sess);return refresh()})
+  .then(function(){header('profile');er=$('#er');er.className='err ok';er.textContent='تم الحفظ ✓'}).catch(function(e){er.textContent=e.message})}
+function submitOrder(){var q=triage();
+  if(!q.svc){alert('اختار نوع الخدمة الأول');return}
+  if(!ENABLED[q.svc]){alert('الخدمة دي لسه مش متاحة وهتتوفر قريباً. لو في خطر اخرج من المكان واطلب أرقام الطوارئ الرسمية.');return}
+  api('/api/orders','POST',{svc:q.svc,pr:q.pr||'mid',place:W.place||'',syms:W.syms,symc:payload().symptoms,desc:W.desc||'',date:W.date,slot:SLOTS[W.slot],addr:W.addr,files:(W.files||[]).length,vulnerable:!!W.vul})
+  .then(refresh).then(function(){W={desc:'',place:'',syms:[],when:'',addr:0,date:'',slot:0,step:1};go('orders')}).catch(function(e){alert(e.message)});
+}
+function sendTk(){var x=$('#tx').value.trim();if(!x){$('#er').textContent='اكتب التفاصيل';return}
+  api('/api/tickets/support','POST',{type:$('#tt').value,text:x}).then(refresh).then(vSupport).catch(function(e){$('#er').textContent=e.message})}
+function closeOrder(){var o=openO()[0];if(!o){alert('مفيش طلب مفتوح');return}
+  api('/api/orders/'+o.id+'/close','POST',{lab:+$('#lab').value||0,parts:partsT()}).then(refresh).then(function(){ST.parts=[];ST.stg=1;stab('tasks')}).catch(function(e){alert(e.message)})}
+function assignO(id){var e=$('#as_'+id).value;act('/api/orders/'+id+'/assign',{tech:e})}
+function orderCall(id,res){act('/api/orders/'+id+'/call',{result:res})}
+function saveCall(){if(!(CC.x||'').trim()){$('#er').textContent='اكتب تفاصيل البلاغ';return}
+  api('/api/tickets','POST',{type:CC.cls,pr:CC.pr,text:CC.x,ord:CC.ord||'',actions:CC.act.slice(),cust:CC.cust||'',sender:CC.n||''})
+  .then(function(r){ST.tk=r.id;CC={cls:'بلاغ عطل جديد',pr:'عاجل',act:['إخطار الفني فوراً','إرسال SMS للعميل']};return refresh()})
+  .then(function(){stab('tk')}).catch(function(e){$('#er').textContent=e.message})}
+function tkDone(id){act('/api/tickets/'+id+'/done')}
+function techCall(id,res){act('/api/tickets/'+id+'/techcall',{result:res})}
+function addNote(id){var v=$('#nt').value.trim();if(!v)return;act('/api/tickets/'+id+'/note',{text:v})}
+function escal(id){act('/api/tickets/'+id+'/escalate')}
+function payO(id,m){act('/api/invoices/'+id+'/pay',{method:m||PAYM[0]})}
+function etaO(id){act('/api/invoices/'+id+'/eta')}
+function payTech(e){act('/api/payroll/pay',{email:e})}
+function setRate(v){api('/api/settings/rate','PUT',{rate:+v||0}).then(refresh).then(function(){vStaff()}).catch(function(e){alert(e.message);vStaff()})}
+function addExp(){var d=$('#xd').value.trim(),a=+$('#xa').value,k=$('#xk').value;if(!d||!(a>0)){$('#er').textContent='اكتب الوصف ومبلغ صحيح';return}
+  api('/api/expenses','POST',{descr:d,amt:a,kind:k}).then(refresh).then(function(){vStaff()}).catch(function(e){$('#er').textContent=e.message})}
+function togSvc(k){act('/api/admin/services/'+k+'/toggle')}
+function togStaff(id){act('/api/admin/staff/'+id+'/toggle')}
+function addStaff(){var n=$('#an').value.trim(),e=$('#ae').value.trim().toLowerCase(),p=$('#ap').value,er=$('#er');
+  if(!n||!/^\S+@\S+\.\S+$/.test(e)){er.textContent='كمّل الاسم والبريد';return}
+  if(pwRules(p).some(function(r){return !r[0]})){er.textContent='كلمة المرور لازم 8 حروف على الأقل وفيها حرف ورقم ورمز';return}
+  api('/api/admin/staff','POST',{role:$('#ar').value,name:n,email:e,password:p}).then(refresh).then(function(){vStaff()}).catch(function(x){er.textContent=x.message})}
+
+/* ---- الراوتر ---- */
+var PUB=['login','register','forgot','reset'];
+var VIEWS={services:vServices,invoices:vInvoices,support:vSupport,login:vLogin,register:vRegister,forgot:vForgot,reset:vReset,home:vHome,new:vNew,orders:vOrders,notifs:vNotifs,profile:vProfile,staff:vStaff};
+function route(){
+  var r=location.hash.slice(1)||(sess?(sess.role==='customer'?'home':'staff'):'login');
+  if(!VIEWS[r])r='login';
+  if(!sess&&PUB.indexOf(r)<0)r='login';
+  if(sess&&PUB.indexOf(r)>-1)r=sess.role==='customer'?'home':'staff';
+  if(sess&&sess.role!=='customer'&&r!=='staff')r='staff';
+  if(r==='new'&&!me()){logout();return}
+  $('#app').style.maxWidth=r==='staff'?'1240px':'';header(r);VIEWS[r]();window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+if(sess&&sess.token){refresh().then(route,function(e){if(sess){header('');$('#app').innerHTML='<div class="auth"><div class="card"><h2>تعذر الاتصال بالسيرفر</h2><p class="sub">'+esc(e.message)+'</p><button class="btn" onclick="location.reload()">إعادة المحاولة</button></div></div>'}else route()})}
+else{if(sess)dropSess();route()}
+</script>
+</body>
+</html>

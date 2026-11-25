@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pyjwt
+pandas
+numpy
+joblib
+scikit-learn==1.9.1
+tzdata
+# للاختبارات فقط:
+pytest
+httpx

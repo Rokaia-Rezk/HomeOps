@@ -1,0 +1,12 @@
+{
+  "category": {
+    "cv_synthetic": 0.997,
+    "handwritten_acc": 0.792,
+    "handwritten_macro_f1": 0.795
+  },
+  "priority": {
+    "cv_synthetic": 0.99,
+    "handwritten_acc": 0.792,
+    "handwritten_macro_f1": 0.758
+  }
+}

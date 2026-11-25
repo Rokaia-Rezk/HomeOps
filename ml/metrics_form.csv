@@ -1,0 +1,6 @@
+﻿,,category,priority
+form_only(no text),all68,0.603,0.824
+text+form,all68,0.912,0.941
+text+form,blind24,0.875,0.875
+text_only,all68,0.912,0.897
+text_only,blind24,0.833,0.792
